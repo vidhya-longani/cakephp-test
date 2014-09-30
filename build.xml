@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="CakePHP" default="">
+	<!--
+	Build.xml file for CakePHP
+
+	Uses phing to create releases, and pear packages.
+	Based off of build.xml in doctrine.
+
+	Requires the d51PearPkg2 to be installed:
+
+	pear channel-discover pear.domain51.com
+	pear install domain51/Phing_d51PearPkg2Task
+
+	Use the `release` task to update VERSION.txt, and create a new tag.
+	Use the `build` task to create a pear package based on the current working copy.
+	Use the `clean` task to clean up packaging artifacts.
+
+	-->
+	<property name="project.basedir" value="/var/www/cakephp" />
+	
+	<tstamp>
+    	<format property="build.time" pattern="%Y_%m_%d__%H_%M_%S" />
+  	</tstamp>
+
+	  <property name="build.dbdeploy.deployfile" value="blog_posts.sql" />
+    <property name="build.dbdeploy.undofile" value="undo.sql" />
+    <property name="db.user" value="root" />
+    <property name="db.password" value="password" />
+    <property name="db.database" value="blog" />
+    <property name="db.host" value="172.16.144.149" />
+
+    <!-- <mkdir  dir="/var/www/cakephp/cakecheck-${build.time}" /> -->
+    <target name="_deploy" description="Deploys a copy of php app to server">
+    <!-- Put the code in the webroot (remove unwanted files) -->
+    <scp  username="deployer"  password="deployer" host="172.16.144.149" todir="/var/www/deployments/cakecheck-${build.time}">
+    <fileset dir=".">
+      <include name="**"/> 
+    </fileset>
+    </scp>
+    <!-- Make the code live. -->
+    <ssh host="172.16.144.149" username="deployer"  password="deployer" command="rm /var/www/cakephp" />
+    <ssh host="172.16.144.149" username="deployer"  password="deployer" command="ln -s /var/www/deployments/cakecheck-${build.time} /var/www/cakephp" />
+
+    </target>
+    
+  	<target name="database">
+
+<!--         <echo msg="Deploying database..." />
+ 
+        <tstamp/>
+
+		<taskdef name="dbdeploy" classname="phing.tasks.ext.dbdeploy.DbDeployTask" />
+        <echo message="Database undo file ${build.dbdeploy.undofile}" />
+ 		
+        <dbdeploy
+            url="mysql:host=${db.host};dbname=${db.database}"
+            userid="${db.user}"
+            password="${db.password}"
+            dir="${project.basedir}/app/Config/Schema/"
+            outputfile="${build.dbdeploy.deployfile}"
+            undooutputfile="${build.dbdeploy.undofile}" />
+ 
+        <exec
+            command="mysql -h${db.host} -u${db.user} -p ${db.password} ${db.database} &lt; ${build.dbdeploy.deployfile}"
+            dir="${project.basedir}"
+            checkreturn="true" />   -->
+    </target>
+</project>
